@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Untitled Document</title>
+<script>
+	document.addEventListener("DOMContentLoaded", function() {
+	    fetch('fetch_destination.php')
+		  .then(response => response.json())
+		  .then(data => {
+			let dropdown = document.getElementById('destination');
+			data.forEach(dest => {
+				let option = document.createElement('option');
+				option.value=dest.id;
+				option.setAttribute('data-price',
+	            dest.price_per_person);
+				option.textContent = dest.name + '-Rs'+
+				dest.price_per_person + 'per person';
+				dropdown.appendChild(option);
+			});
+		});
+		
+	document.getElementById('calculate').addEventListener('click',
+	function() {
+		let destination = document.getElementById('destination');
+		let pricePerPerson = 
+		parseFloat(destination.options[destination.selectedIndex].getAttribute('data-price'));
+		let numTravelers = 
+		parseInt(document.getElementById('num_travelers').value);
+		let totalPrice = pricePerPerson * numTravelers;
+		document.getElementById('total_price').textContent = 'TotalPrice: $' + totalPrice.toFixed(2);
+	  });
+	});
+														  
+	</script>
+</head>
+
+<body>
+	<h2>Trip Price Calculator</h2>
+	<form action="process_booking.php" method="post">
+	<label for="destination">Select Destination:</label>
+	<select id="destination" name="destination" required></select>
+	
+	<label for="num_travelers">Number of travellers:</label>
+	<input type="number" id="num_travelers" name="num_travelers" min="1" required>
+	<button type="button" id="calculate">Calculate Price:</button>
+	<p id="total_price">Total price:$0.00</p>
+	
+	<input type="submit" value="Book Now">
+	</form>
+</body>
+</html>
